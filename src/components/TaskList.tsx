@@ -1,11 +1,13 @@
 import { useState } from 'react'
+import { v4 as uuidv4 } from 'uuid';
 
 import '../styles/tasklist.scss'
 
 import { FiTrash, FiCheckSquare } from 'react-icons/fi'
+import { transformFileAsync } from '@babel/core';
 
 interface Task {
-  id: number;
+  id: string; //id: number
   title: string;
   isComplete: boolean;
 }
@@ -16,14 +18,66 @@ export function TaskList() {
 
   function handleCreateNewTask() {
     // Crie uma nova task com um id random, não permita criar caso o título seja vazio.
+    if(newTaskTitle.length === 0){
+      return;
+    }
+
+    const newTask: Task = {
+      id: uuidv4(),
+      title: newTaskTitle,
+      isComplete: false
+    }
+    
+    setTasks(tasks => [...tasks, newTask]);
+    //setNewTaskTitle('');
   }
 
-  function handleToggleTaskCompletion(id: number) {
+  function handleToggleTaskCompletion(id: string) {
     // Altere entre `true` ou `false` o campo `isComplete` de uma task com dado ID
+    // const index: number = tasks.findIndex(task => {
+    //   return task.id === id;
+    // })
+
+    // if(index === -1){
+    //   return;
+    // }
+
+    // tasks[index].isComplete = !tasks[index].isComplete;
+
+    
+
+    // const newTaskArray = tasks.map((task) => {
+    //   task.isComplete = task.id === id ? !task.isComplete : task.isComplete;
+    //   return task;
+    // });
+
+    const newTaskArray = tasks.map((task) => {
+      if(task.id === id) task.isComplete = !task.isComplete;
+      return task;
+    });
+    setTasks(newTaskArray);
   }
 
-  function handleRemoveTask(id: number) {
+  function handleRemoveTask(id: string) {
     // Remova uma task da listagem pelo ID
+    
+    // Essa funciona, mas ainda não atualiza direito na página. Não sei o pq
+
+    // let newTaskArray: Task[] = tasks;
+    // const index: number = tasks.findIndex(task => {
+    //   return task.id === id;
+    // })
+
+    // if(index === -1){
+    //   return;
+    // }
+    
+    // newTaskArray.splice(index,1);
+    // setTasks(newTaskArray);
+
+    // Esta funciona, mas sei lá pq essa funciona e outro não, tenho que procurar mais sobre.
+    const newTaskArray = tasks.filter(task => {return task.id !== id;})
+    setTasks(newTaskArray);
   }
 
   return (
